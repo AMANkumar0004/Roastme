@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../api.js';
 
 const intensityEmoji = { mild: '😊', spicy: '🌶️', brutal: '💀' };
 
@@ -16,7 +16,7 @@ export default function History() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/roast/history')
+    api.get('/api/roast/history')
       .then(res => setRoasts(res.data))
       .catch(() => {})
       .finally(() => setLoading(false));

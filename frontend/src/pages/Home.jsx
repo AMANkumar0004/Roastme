@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../api.js';
 import { toast } from 'react-toastify';
 import RecentRoasts from '../components/RecentRoasts';
 
@@ -49,7 +49,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const { data } = await axios.post('/api/roast', { url: url.trim(), intensity });
+      const { data } = await api.post('/api/roast', { url: url.trim(), intensity });
       toast.success('Roast is ready! 🔥');
       navigate(`/results/${data.id}`, { state: data });
     } catch (err) {

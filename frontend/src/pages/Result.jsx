@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../api.js';
 import { toast } from 'react-toastify';
 import RoastCard from '../components/RoastCard';
 import SuggestionList from '../components/SuggestionList';
@@ -16,7 +16,7 @@ export default function Results() {
 
   useEffect(() => {
     if (!location.state) {
-      axios.get(`/api/roast/${id}`)
+      api.get(`/api/roast/${id}`)
         .then(res => setData(res.data))
         .catch(() => setError('Roast not found.'))
         .finally(() => setLoading(false));

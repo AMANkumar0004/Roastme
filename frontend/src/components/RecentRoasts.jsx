@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../api.js';
 
 function scoreColor(score) {
   if (score >= 7) return 'var(--green)';
@@ -15,7 +15,7 @@ export default function RecentRoasts() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/roast/recent')
+    api.get('/api/roast/recent')
       .then(res => setRoasts(res.data))
       .catch(() => {});
   }, []);
