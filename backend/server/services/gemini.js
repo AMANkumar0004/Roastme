@@ -79,14 +79,19 @@ Return ONLY raw valid JSON, zero markdown, zero backticks, zero explanation:
     max_tokens: 1500,
   });
 
-  const text = response.choices[0]?.message?.content || "";
-  const clean = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+ const text = response.choices[0]?.message?.content || "";
 
-  try {
-    return JSON.parse(clean);
-  } catch (e) {
-    throw new Error("AI returned invalid JSON. Try again.");
-  }
+const jsonMatch = text.match(/\{[\s\S]*\}/);
+if (!jsonMatch) {
+  console.error("No JSON found:", text);
+  throw new Error("AI returned invalid JSON. Try again.");
 }
+
+try {
+  return JSON.parse(jsonMatch[0]);
+} catch (e) {
+  console.error("Parse failed:", jsonMatch[0]);
+  throw new Error("AI returned invalid JSON. Try again.");
+}}
 
 module.exports = { roastWithGemini };
