@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const intensityEmoji = { mild: '😊', spicy: '🌶️', brutal: '💀' };
 

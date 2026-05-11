@@ -7,8 +7,14 @@ const roastRoutes = require("./routes/roast");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5176',
+    'https://roastme.vercel.app', 
+  ]
+}))
 app.use(express.json());
+
 
 // Routes
 app.use("/api/roast", roastRoutes);
