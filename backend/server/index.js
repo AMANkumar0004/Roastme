@@ -10,9 +10,11 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5176',
-    'https://roastme.vercel.app', 
-  ]
-}))
+    'https://roastme-delta.vercel.app'
+  ],
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 app.use(express.json());
 
 
