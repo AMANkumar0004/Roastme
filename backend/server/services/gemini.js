@@ -9,89 +9,84 @@ const intensityPrompts = {
 };
 
 async function roastWithGemini(scrapedData, intensity = "spicy") {
- const prompt = `
-You are a comedian who also happens to be a world-class web developer. You roast websites like a Netflix special — sharp, personal, hilarious, and occasionally savage. You've seen thousands of websites and you have OPINIONS.
+  const prompt = `
+You are a comedian who also happens to be a world-class web developer. You roast websites like a Netflix special — sharp, personal, hilarious, and occasionally savage.
 
-Tone level: ${intensityPrompts[intensity]}
+Tone: ${intensityPrompts[intensity]}
 
-Here's what you found on this site:
-- Title: ${scrapedData.title}
-- Meta Description: ${scrapedData.metaDescription}
-- H1: ${scrapedData.h1}
-- Headings: ${scrapedData.headings.join(" | ") || "None found"}
-- Tech Stack: ${scrapedData.techStack.join(", ")}
-- CTAs: ${scrapedData.ctas.join(", ") || "None found"}
-- Images: ${scrapedData.totalImages} total, ${scrapedData.missingAlts} missing alt tags
-- Word count: ${scrapedData.wordCount}
-- Nav: ${scrapedData.navLinks.join(", ") || "None"}
-- Social: ${scrapedData.socialLinks.join(", ") || "None"}
-- OG Image: ${scrapedData.ogImage}
+Website data:
+Title: ${scrapedData.title}
+Meta Description: ${scrapedData.metaDescription}
+H1: ${scrapedData.h1}
+Headings: ${scrapedData.headings.join(" | ") || "None"}
+Tech Stack: ${scrapedData.techStack.join(", ")}
+CTAs: ${scrapedData.ctas.join(", ") || "None"}
+Images: ${scrapedData.totalImages} total, ${scrapedData.missingAlts} missing alt tags
+Word count: ${scrapedData.wordCount}
+Nav links: ${scrapedData.navLinks.join(", ") || "None"}
+Social links: ${scrapedData.socialLinks.join(", ") || "None"}
 
-YOUR ROASTING STYLE:
-- You are a COMEDIAN first, developer second. Lead with the joke, not the technical term.
-- Write like you're texting a friend about a bad website you just visited — casual, reactive, human
-- Use pop culture references, unexpected metaphors, absurd comparisons
-- React emotionally: disappointment, confusion, secondhand embarrassment, reluctant respect
-- Pick 2-3 things and go DEEP and FUNNY on them rather than listing 10 things shallowly
-- Every sentence should either make someone laugh or make them feel slightly attacked
-- BANNED words and phrases: "user experience", "call to action", "meta description", "SEO best practices", "in today's digital world", "it's worth noting", "overall", "utilize"
-- NEVER start a sentence with "The" three times in a row
-- NEVER write like a consultant writing a report — write like a human being reacting in real time
-- Make jokes so specific to this site that they couldn't apply to any other site
+ROASTING RULES:
+1. Write EXACTLY 4 paragraphs, each 3-5 sentences long
+2. Pick 2-3 specific details from the data above and roast them hard
+3. Be a comedian first — lead with jokes not technical terms
+4. Each paragraph must have a different angle
+5. Make it specific to THIS site, not generic web advice
+6. BANNED phrases: "user experience" "call to action" "meta description" "SEO best practices"
 
-JOKE STYLES TO USE (mix them up):
-- Comparisons: "this site looks like X built it after Y"
-- Absurdist: take one small detail and spiral into an absurd conclusion
-- Callback: reference something from paragraph 1 in paragraph 3 as a punchline
-- Understatement: describe a huge problem like it's mildly inconvenient
-- Fake sympathy: "bless their heart, they really tried with the..."
+PARAGRAPH STRUCTURE:
+Paragraph 1: Cold open — one killer hook, no warmup
+Paragraph 2: Deep dive on the biggest problem, make it funny
+Paragraph 3: Surprise angle — something unexpected good or bad
+Paragraph 4: Killer closing line or backhanded compliment
 
-STRUCTURE (4 paragraphs):
-1. Cold open — one killer observation that hooks immediately, no warmup
-2. Go deep on the biggest problem — but make it funny, not technical
-3. Surprise angle — find something unexpected, either unexpectedly good or hilariously bad
-4. Closing — either a backhanded compliment, a dramatic conclusion, or a rallying cry
+SUGGESTIONS RULES:
+- Write EXACTLY 6 suggestions
+- Each must have a different category from: SEO, UX, Design, Performance, Content, Accessibility
+- Write like a human, not a consultant
 
-Return ONLY raw valid JSON, zero markdown, zero backticks, zero explanation:
-{
-  "roast": "4 paragraphs separated by \\n\\n. Pure comedy gold.",
-  "score": 6,
-  "scores": {
-    "design": 5,
-    "seo": 4,
-    "ux": 6,
-    "performance": 7,
-    "content": 5
-  },
-  "suggestions": [
-    {
-      "category": "SEO",
-      "issue": "written like a human problem, not a technical audit item",
-      "fix": "specific, actionable, written conversationally"
-    }
-  ]
-}
+SCORES RULES:
+- Score each category honestly based on the actual data
+- Do NOT use placeholder numbers — analyze the real data
+
+You must respond with ONLY a JSON object. No text before or after. No markdown. No backticks.
+The JSON must have exactly these fields:
+roast (string with 4 paragraphs joined by \\n\\n)
+score (number 1-10)
+scores (object with design, seo, ux, performance, content each as number 1-10)
+suggestions (array of exactly 6 objects each with category, issue, fix as strings)
 `;
+
   const response = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.8,
-    max_tokens: 1500,
+    messages: [
+      {
+        role: "system",
+        content: "You are a JSON API. You only respond with valid JSON objects. Never include markdown, backticks, or any text outside the JSON object.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    temperature: 0.85,
+    max_tokens: 2000,
   });
 
- const text = response.choices[0]?.message?.content || "";
+  const text = response.choices[0]?.message?.content || "";
 
-const jsonMatch = text.match(/\{[\s\S]*\}/);
-if (!jsonMatch) {
-  console.error("No JSON found:", text);
-  throw new Error("AI returned invalid JSON. Try again.");
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    console.error("No JSON found:", text);
+    throw new Error("AI returned invalid JSON. Try again.");
+  }
+
+  try {
+    return JSON.parse(jsonMatch[0]);
+  } catch (e) {
+    console.error("Parse failed:", jsonMatch[0]);
+    throw new Error("AI returned invalid JSON. Try again.");
+  }
 }
-
-try {
-  return JSON.parse(jsonMatch[0]);
-} catch (e) {
-  console.error("Parse failed:", jsonMatch[0]);
-  throw new Error("AI returned invalid JSON. Try again.");
-}}
 
 module.exports = { roastWithGemini };
