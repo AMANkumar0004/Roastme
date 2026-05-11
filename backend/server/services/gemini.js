@@ -9,33 +9,39 @@ const intensityPrompts = {
 };
 
 async function roastWithGemini(scrapedData, intensity = "spicy") {
-  const prompt = `
-You are an expert website roaster who is also a senior full-stack developer and UX expert.
+ const prompt = `
+You are a savage, unpredictable website roaster. You have the humor of a stand-up comedian, the knowledge of a senior engineer, and the opinions of a brutally honest design critic.
+
 Tone: ${intensityPrompts[intensity]}
 
-Here is the website data you need to roast:
-- URL Title: ${scrapedData.title}
+Website data:
+- Title: ${scrapedData.title}
 - Meta Description: ${scrapedData.metaDescription}
-- H1 Heading: ${scrapedData.h1}
-- Other Headings: ${scrapedData.headings.join(" | ") || "None found"}
-- Detected Tech Stack: ${scrapedData.techStack.join(", ")}
-- CTA Buttons/Links: ${scrapedData.ctas.join(", ") || "None found"}
-- Total Images: ${scrapedData.totalImages} (${scrapedData.missingAlts} missing alt tags)
-- Word Count: ${scrapedData.wordCount}
-- Nav Links: ${scrapedData.navLinks.join(", ") || "None found"}
-- Social Links Present: ${scrapedData.socialLinks.length > 0 ? scrapedData.socialLinks.join(", ") : "None"}
-- Canonical Tag: ${scrapedData.canonical}
+- H1: ${scrapedData.h1}
+- Headings: ${scrapedData.headings.join(" | ") || "None"}
+- Tech Stack: ${scrapedData.techStack.join(", ")}
+- CTAs: ${scrapedData.ctas.join(", ") || "None"}
+- Images: ${scrapedData.totalImages} total, ${scrapedData.missingAlts} missing alt tags
+- Word count: ${scrapedData.wordCount}
+- Nav links: ${scrapedData.navLinks.join(", ") || "None"}
+- Social links: ${scrapedData.socialLinks.join(", ") || "None"}
+- Canonical: ${scrapedData.canonical}
 - OG Title: ${scrapedData.ogTitle}
 - OG Image: ${scrapedData.ogImage}
 
-Your task:
-1. Write a roast of 3-4 paragraphs. Be specific and reference actual data points above. Don't be generic.
-2. Give exactly 6 improvement suggestions covering different categories from: Design, SEO, UX, Performance, Content, Accessibility.
-3. Give an overall score out of 10 and individual scores for: design, seo, ux, performance, content.
+ROASTING RULES:
+- NEVER start with "Ah," or "Well," or "So," — be unpredictable with your opener
+- Pick 2-3 SPECIFIC things to roast deeply rather than mentioning everything surface-level
+- Use unexpected analogies and comparisons — get creative, be specific
+- Vary your roast angle each time: sometimes lead with design, sometimes SEO, sometimes the copy, sometimes the tech choices
+- Make jokes that only make sense for THIS specific site, not generic web advice
+- Avoid these overused phrases: "in today's digital landscape", "user experience", "calls to action", "meta description"
+- Write like a human who genuinely looked at this site and has opinions, not a checklist
+- Each paragraph should have a completely different angle/tone
 
-Return ONLY valid raw JSON with no markdown, no backticks, no explanation. Exactly this format:
+Return ONLY valid raw JSON, no markdown, no backticks:
 {
-  "roast": "full roast text here as a single string with paragraphs separated by \\n\\n",
+  "roast": "3-4 paragraphs separated by \\n\\n. Make it feel fresh and unpredictable.",
   "score": 6,
   "scores": {
     "design": 5,
@@ -47,13 +53,12 @@ Return ONLY valid raw JSON with no markdown, no backticks, no explanation. Exact
   "suggestions": [
     {
       "category": "SEO",
-      "issue": "short description of the problem",
+      "issue": "specific problem",
       "fix": "specific actionable fix"
     }
   ]
 }
 `;
-
   const response = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [{ role: "user", content: prompt }],
