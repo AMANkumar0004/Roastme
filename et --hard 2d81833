@@ -1,0 +1,12 @@
+[33m51037be[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m fix json parsing from groq response
+[33m956687a[m roast restructured
+[33me28e597[m add indian comedian personas
+[33me8db042[m add indian comedian personas
+[33m2d81833[m roast structure corrected
+[33mb32e2ce[m roast structure corrected
+[33m0e44b6c[m fix cors for vercel
+[33me18fdfb[m trigger redeploy
+[33md4a362a[m fix axios to api instance
+[33md6abbf2[m add api config for production
+[33md942540[m add backend files properly
+[33mde35326[m initial commit
