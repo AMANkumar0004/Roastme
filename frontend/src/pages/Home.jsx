@@ -132,7 +132,7 @@ export default function Home() {
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://yourportfolio.com"
+                placeholder="Drop your link here... e.g. https://example.com"
                 disabled={loading}
                 style={{
                   flex: 1,
