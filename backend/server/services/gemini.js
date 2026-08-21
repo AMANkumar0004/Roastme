@@ -58,7 +58,7 @@ suggestions (array of exactly 6 objects each with category, issue, fix as string
 `;
 
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "openai/gpt-oss-120b",
     messages: [
       {
         role: "system",
